@@ -49,7 +49,7 @@ d3.csv("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/Total_deaths_
                     console.log(nest)
                 var color = d3.scaleOrdinal()
                               .domain(res)
-                              .range(['blue','green','orange','red','gray','purple'])
+                              .range(['blue','green','orange','gray','red','purple'])
 
                 var xaxis = svg.append("g")
                               .attr("transform", "translate(0," + height + ")")
@@ -59,7 +59,7 @@ d3.csv("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/Total_deaths_
                                 .tickSize(0, 0)
                                 .tickFormat(d3.timeFormat("%b-%d"))
                                 .tickSizeInner(0)
-                                .tickPadding(10));
+                                .tickPadding(1));
 
                                 var yaxis = svg.append("g")
                                 .attr("class", "y axis")
@@ -85,23 +85,6 @@ d3.csv("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/Total_deaths_
                                   .attr('class',function(d) { return "line " + d.key })
                                   .attr('d', d => line(d.values))
                                   .style("stroke-width","2") 
-
-                                  svg
-                                  .selectAll("myDots")
-                                  .data(nest)
-                                  .enter()
-                                  .append('g')
-                                  .style("fill", "white")
-                                  .attr("stroke",function (d) { return color(d.key) })
-                                  .style("stroke-width","0.5") 
-                                  .selectAll("myPoints")
-                                  .data(function (d) { return d.values })
-                                  .enter()
-                                  .append("circle")
-                                  .attr("cx", function (d) { return x(d.Date) })
-                                  .attr("cy", function (d) { return y(d.Case) })
-                                  .attr("r", 2)
-                                  .attr('class',function(d) { return "circle " + d.key })
 
                                   var highlight =function(d) {
   
