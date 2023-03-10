@@ -177,7 +177,7 @@ svg.selectAll("mylabels")
   mouseG.append("path")
       .attr("class", "mouse-line")
       .style("stroke", "black")
-      .style("stroke-dasharray", ("3, 3"))
+      .style("stroke-dasharray", ("1, 1"))
       .style("stroke-width", "1.5px")
       .style("opacity", "0");
 
