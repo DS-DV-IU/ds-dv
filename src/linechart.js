@@ -61,7 +61,7 @@ var xaxis = svg.append("g")
 .call(d3.axisBottom(x)
   .ticks(d3.timeDate)
   .tickSize(0, 0)
-  .tickFormat(d3.timeFormat("%b-%d"))
+  .tickFormat(d3.timeFormat("%m/%d/%Y"  ))
   .tickSizeInner(0)
   .tickPadding(10));
 
@@ -82,7 +82,7 @@ svg.append("text")
 .attr("x", 0 - (height / 2))
 .attr("dy", "1em")
 .style("text-anchor", "middle")
-.text("CONFIRMED CASES ")
+.text("DEATTH CASES ")
 .attr("class", "y axis label")
 .style("fill", "darkgreen")
 
@@ -188,7 +188,7 @@ svg.selectAll("mylabels")
       .attr("class", "mouse-per-line");
 
   mousePerLine.append("circle")
-      .attr("r", 7)
+      .attr("r", 3)
       .style("stroke", function(d) {
           return color(d.key);
       })
