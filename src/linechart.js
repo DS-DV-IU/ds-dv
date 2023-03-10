@@ -234,7 +234,7 @@ svg.selectAll("mylabels")
           d3.selectAll(".mouse-per-line")
               .attr("transform", function(d) {
 
-                  var xDate = x.invert(mouse[0] - 20);
+                  var xDate = x.invert(mouse[0]);
                   var bisect = d3.bisector(function(d) { return d.Date; }).right;
                   var idx = bisect(d.values, xDate);
 
