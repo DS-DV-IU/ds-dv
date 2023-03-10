@@ -49,7 +49,7 @@ d3.csv("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/Total_deaths_
                     console.log(nest)
                 var color = d3.scaleOrdinal()
                               .domain(res)
-                              .range(['blue','green','orange','gray','red','purple'])
+                              .range(['blue','green','orange','Navy','red','purple'])
 
                 var xaxis = svg.append("g")
                               .attr("transform", "translate(0," + height + ")")
