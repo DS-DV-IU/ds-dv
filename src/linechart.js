@@ -6,7 +6,7 @@ var rowConverter = function(d) {
     }
 }
 
-d3.csv("C:\Users\DELL\OneDrive - VietNam National University - HCM INTERNATIONAL UNIVERSITY\Desktop\ds-dv\data",
+d3.csv("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/Total_deaths_line_chart.csv",
         rowConverter,
         function (error,data) {
             if (error){
