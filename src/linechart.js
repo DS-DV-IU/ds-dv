@@ -1,12 +1,12 @@
 var rowConverter = function(d) {
     return {
-        Case: parseFloat(d["new_deaths"]),
+        Case: parseFloat(d["total_deaths"]),
         Location: d["location"],
         Date: new Date(parseInt(d["year"]), parseInt(d["month"]-1), parseInt(d["day"]))
     }
 }
 
-d3.csv("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/Total_deaths_line_chart.csv",
+d3.csv("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/linechart.csv",
         rowConverter,
         function (error,data) {
             if (error){
