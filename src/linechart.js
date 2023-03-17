@@ -1,6 +1,6 @@
 var rowConverter = function(d) {
     return {
-        Case: parseInt(d["new_cases"]),
+        Case: parseFloat(d["new_deaths"]),
         Location: d["location"],
         Date: new Date(parseInt(d["year"]), parseInt(d["month"]-1), parseInt(d["day"]))
     }
