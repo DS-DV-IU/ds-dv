@@ -17,7 +17,7 @@ d3.csv("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/Total_deaths_
                 
 // Set the margins
 var margin = { top: 60, right: 100, bottom: 20, left: 80 },
-width = 1100 - margin.left - margin.right,
+width = 1900 - margin.left - margin.right,
 height = 600 - margin.top - margin.bottom;
 // Create the svg canvas 
 var svg = d3.select("body")
