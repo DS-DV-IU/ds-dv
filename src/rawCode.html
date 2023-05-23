@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <style>
+        body {
+            text-align: center;
+            font-size: 1em;
+        }
+
+        .container {
+            float: left;
+        }
+
+        .menucontainer {
+            font-size: 1em;
+        }
+
+        div.tooltip {
+            position: absolute;
+            text-align: center;
+            width: 60px;
+            padding: 2px;
+            font: 12px sans-serif;
+            background: white;
+            border: solid;
+            border-width: 1px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+    </style>
+    <script src="https://unpkg.com/d3@7.0.1/dist/d3.min.js"></script>
+</head>
+<h3>new_cases Data Visualization</h3>
+
+<div id="WorldMap"></div>
+<div id="MapLegend"></div>
+<script>
+    const {
+        csv,
+        select,
+        scaleLinear,
+        extent,
+        axisLeft,
+        axisBottom,
+        scaleSequential
+    } = d3;
+
+    const margin = { top: 50, right: 30, bottom: 50, left: 70 },
+        width = 462 - margin.left - margin.right,
+        height = 250 - margin.top - margin.bottom;
+
+    const xAxisLabel = 'Region';
+    const yAxisLable = 'Total Deaths';
+
+    const bars = d3.select("#BarPlot")
+        .append("svg")
+        .attr("class", "container")
+        .attr("id", "bar-plot")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    bars.append("text")
+        .attr("class", "x label")
+        .attr("text-anchor", "end")
+        .attr("x", width + 30)
+        .attr("y", height + 30)
+        .style("font-size", "15px")
+        .text(xAxisLabel);
+
+    bars.append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("y", -30)
+        .attr("dy", "-0.8em")
+        .attr("transform", "rotate(-90)")
+        .style("font-size", "15px")
+        .text(yAxisLable);
+
+    // Initialize the X axis
+    const x = d3.scaleBand()
+        .range([10, width - 10])
+        .padding(0.2);
+    const xAxis = bars.append("g")
+        .attr("transform", `translate(0,${height})`)
+
+    // Initialize the Y axis
+    const y = d3.scaleLinear()
+        .range([height, 0]);
+    const yAxis = bars.append("g")
+        .attr("transform", "translate(10,0)")
+
+
+    const worldmap = d3.select("#WorldMap")
+        .append("svg")
+        .attr("class", "container")
+        .attr("id", "world-map")
+        .attr("width", width + margin.left + margin.right) 
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    const projection = d3.geoMercator()
+        .center([5, 40])                // GPS of location to zoom on
+        .scale(50)                       // This is like the zoom
+        .translate([width / 2, height / 2])
+
+    // create tooltip
+    const tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
+    // Draw map
+    d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function (topodata) {
+        const p = worldmap.selectAll("path")
+            .data(topodata.features);
+
+        p
+            .join("path")
+            .attr("fill", "#b8b8b8")
+            .attr("d", d3.geoPath()
+                .projection(projection)
+            )
+            .style("fill", "teal")
+            .style("stroke", "black")
+            .style("opacity", .4)
+            .on("mouseover", function (event, d) {
+                // console.log(d.properties.name);
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                tooltip.html(d.properties.name)
+                    .style("left", (event.pageX - 40) + "px")
+                    .style("top", (event.pageY - 30) + "px");
+                d3.select(this)
+                    .style("stroke", "black")
+                    .style("opacity", 1)
+            })
+            .on("mouseout", function (d) {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+                d3.select(this)
+                    .style("stroke", "black")
+                    .style("opacity", 0.4)
+            });
+    })
+
+    // Add legend: circles
+    const valuesToShow = [1,2,3,4,5,6,7,8]
+    const xCircle = 0
+    const xLabel = 20
+    const yCircle = 180
+
+    // Add legend: segments
+    worldmap
+        .selectAll("legend")
+        .data(valuesToShow)
+        .join("line")
+        .attr('x1', d => xCircle + d * 1.5 - 5)
+        .attr('x2', d => xLabel + d * 4 - 15)
+        .attr('y1', d => yCircle - d * 1.5 + 5)
+        .attr('y2', d => yCircle - d * 1.5 + 5)
+        .attr('stroke', 'black')
+        .style('stroke-dasharray', ('2,2'))
+
+    // Add legend: labels
+    worldmap
+        .selectAll("legend")
+        .data(valuesToShow)
+        .join("text")
+        .attr('x', d => xLabel + d * 4 - 14)
+        .attr('y', d => yCircle - d * 1.5 + 5 + 1)
+        .text(d => d)
+        .style("font-size", 6)
+        .attr('alignment-baseline', 'middle')
+
+    worldmap
+        .append("text")
+        .data(valuesToShow)
+        .attr("x", xCircle - 15)
+        .attr("y", yCircle - 30)
+        .attr("dy", ".35em")
+        .text("level")
+        .style("font-size", 10)
+
+    // data url
+    const csvUrl = "data_org.csv";
+
+    function update(selectedLower, selectedHigher) {
+        // console.log(selectedLower + ", " + selectedHigher);	
+        d3.csv(csvUrl).then(function (data) {
+            console.log("check data: ", data);
+            data = d3.filter(data, d => d.year >= selectedLower & d.year <= selectedHigher);
+            const nest = [];
+            const keys = ["Guatemala", "Russia", "Turkey", "India", "Ecuador", "Taiwan", "United States", "Chile", "Asia", "Italy", "Iran", "China", "Japan", "Nicaragua", "Armenia-Azerbaijan", "India-Nepal", "Pakistan", "Romania", "Argentina", "Peru", "Turkmenistan", "Tajikistan", "Algeria", "Afghanistan", "Morocco", "Yugoslavia", "New Guinea", "Philippines", "Iran-Turkey", "Mexico", "El Salvador", "Colombia-Ecuador", "Armenia", "Pakistan-Afghanistan", "Indonesia", "Colombia", "Afghanistan-Tajikistan"];
+            keys.forEach((d) => {
+                const s = d3.sum(data.filter(data => data.region === d), (e) => e.deaths);
+                //create an object with this key value pair
+                const obj = {
+                    region: d, //region
+                    totaldeaths: s //sum for deaths
+                }
+                if (obj.totaldeaths > 0) {
+                    nest.push(obj); //push this as an object in the nest array
+                }
+            })
+            nest.sort((a, b) => (b.totaldeaths - a.totaldeaths));
+
+            x.domain(nest.map(d => d.region))
+            xAxis.call(d3.axisBottom(x))
+                .selectAll("text")
+                .attr("transform", "translate(-10,0)rotate(-45)")
+                .style("text-anchor", "end")
+                .style("font-size", "9px");
+
+            y.domain([0, d3.max(nest, d => d.totaldeaths) * 1.1]);
+            yAxis.call(d3.axisLeft(y));
+
+            const u = bars.selectAll("rect")
+                .data(nest);
+            const c = worldmap.selectAll("circle")
+                .data(data);
+
+            // update bar plot
+            u.join("rect")
+                .attr("x", d => x(d.region))
+                .attr("y", d => y(d.totaldeaths))
+                .attr("width", x.bandwidth())
+                .attr("height", d => height - y(d.totaldeaths))
+                .attr("fill", "steelblue")
+                .attr("opacity", 0.8)
+
+            // update circles in map
+            c.join("circle")
+                .attr("cx", d => projection([d.lon, d.lat])[0])
+                .attr("cy", d => projection([d.lon, d.lat])[1])
+                .attr("r", d => d.richter * 1.5 - 5)
+                .style("fill", "rgb(104 4 11)")
+                .attr("stroke", "rgb(104 4 11)")
+                .attr("stroke-width", 1)
+                .attr("fill-opacity", .4)
+
+            // draw legend
+            worldmap
+                .selectAll("legend")
+                .data(valuesToShow)
+                .join("circle")
+                .attr("cx", xCircle)
+                .attr("cy", d => yCircle - d * 1.5 + 5)
+                .attr("r", d => d * 1.5 - 5)
+                .style("fill", "none")
+                .attr("stroke", "black")
+        })
+    }
+
+    const parseRow = (d) => {
+        d.richter = +d.richter;
+        d.deaths = +d.deaths;
+        d.year = +d.year;
+        return d;
+    };
+    const xValue = (d) => d.year;
+    const yValue = (d) => d.richter;
+    const rValue = (d) => d.deaths;
+
+    const svg = select('body')
+        .append('svg')
+        .attr('width', width * 2.5)
+        .attr('height', height);
+
+    d3.csv(csvUrl, parseRow).then(function (data) {
+        console.log("check data: ", data);
+        const marks = data.map((d) => ({
+            x: xValue(d),
+            y: yValue(d),
+            r: rValue(d)
+        }));
+        const scatterX = scaleLinear()
+            .domain(extent(data, xValue))
+            .range([margin.left + 50, width * 2.5 - margin.right - 50]);
+
+        const scatterY = scaleLinear()
+            .domain(extent(data, yValue))
+            .range([height * 1.2 - margin.bottom, margin.top]);
+        const scatterR = scaleLinear()
+            .domain(extent(data, rValue))
+            .range([5, 20]);
+        function dblclicked() {
+            const selection = d3.brushSelection(this) ? null : scatterX.range();
+            d3.select(this).call(brush.move, selection);
+        }
+
+        const circle = svg
+            .selectAll('circle')
+            .data(marks)
+            .join('circle')
+            .attr('cx', (d) => scatterX(d.x))
+            .attr('cy', (d) => scatterY(d.y))
+            .attr('r', (d) => scatterR(d.r))
+            .attr('opacity', 0.5);
+
+        const brush = d3.brushX()
+            .extent([[margin.left + 50, margin.top], [width * 2.5 - margin.right - 50, height * 1.2 - margin.bottom]])
+            .on("start brush end", brushed);
+
+        function brushed({ selection }) {
+            if (selection === null) {
+                circle.attr("fill", null);
+            } else {
+                const [x0, x1] = selection.map(scatterX.invert);
+                if (isNaN(x0)) {
+                    // Initialize to show 1900-1930 data
+                    update(1900, 1930);
+                } else {
+                    circle.attr("fill", d => x0 <= d.x && d.x <= x1 ? "red" : null);
+                    update(x0, x1);
+                }
+            }
+        }
+        svg
+            .append("g")
+            .call(brush)
+            .call(brush.move, [3, 5].map(x))
+            .on("dblclick", dblclicked);
+
+        svg
+            .append('g')
+            .attr('transform', `translate(${margin.left + 50},0)`)
+            .call(axisLeft(scatterY));
+
+        svg
+            .append('g')
+            .attr(
+                'transform',
+                `translate(0,${height * 1.2 - margin.bottom})`
+            )
+            .call(axisBottom(scatterX));
+
+        svg.append("text")
+            .attr("class", "x label")
+            .attr("text-anchor", "end")
+            .attr("x", width * 2.5 - 50)
+            .attr("y", height * 1.2 - 30)
+            .style("font-size", "15px")
+            .text("Year");
+
+        svg.append("text")
+            .attr("class", "y label")
+            .attr("text-anchor", "end")
+            .attr("y", 0)
+            .attr("x", -40)
+            .attr("dy", "6em")
+            .attr("transform", "rotate(-90)")
+            .style("font-size", "15px")
+            .text("level");
+
+    })
+
+
+</script>
+
+</html>
