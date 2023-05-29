@@ -16,7 +16,7 @@ d3.csv("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/linechart.csv
             console.log(data)
 
             // Set the margins
-            var margin = { top: 60, right: 100, bottom: 20, left: 80 },
+            var margin = { top: 60, right: 100, bottom: 60, left: 80 },
                 width = 1450 - margin.left - margin.right,
                 height = 600 - margin.top - margin.bottom;
             // Create the svg canvas 
@@ -56,13 +56,13 @@ d3.csv("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/linechart.csv
 
             //  Add the X Axis
             var xaxis = svg.append("g")
-                .attr("transform", "translate(0," + height + ")")
+                .attr("transform", "translate(0," + (height) + ")")
                 .attr("class", "x axis")
                 .call(d3.axisBottom(x)
                     .ticks(d3.timeDate)
-                    .tickSize(0, 0)
-                    .tickFormat(d3.timeFormat("%m/%d/%Y"))
-                    .tickSizeInner(0)
+                    .tickSize(0)
+                    .tickFormat(d3.timeFormat("%m/%Y"))
+                    .tickSizeInner(6)
                     .tickPadding(10));
 
             // Add the Y Axis
