@@ -114,7 +114,7 @@
         .style("opacity", 0);
 
     // Draw map
-    d3.json("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/geomap.json").then(function (topodata) {
+    d3.json("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/geomap.geojson").then(function (topodata) {
         const p = worldmap.selectAll("path")
             .data(topodata.features);
 
