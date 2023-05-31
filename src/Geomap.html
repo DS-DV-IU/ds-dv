@@ -32,7 +32,7 @@
     </style>
     <script src="https://unpkg.com/d3@7.0.1/dist/d3.min.js"></script>
 </head>
-<h3>new_cases Data Visualization</h3>
+<h3 style="color:rgb(216, 21, 21); font-size: 30px;">new_cases Data Visualization</h3>
 
 <div id="WorldMap"></div>
 <div id="MapLegend"></div>
@@ -244,8 +244,8 @@
                 .attr("cx", d => projection([d.lon, d.lat])[0])
                 .attr("cy", d => projection([d.lon, d.lat])[1])
                 .attr("r", d => d.richter * 1.5 - 5)
-                .style("fill", "rgb(104 4 11)")
-                .attr("stroke", "rgb(104 4 11)")
+                .style("fill", "rgb(0, 0, 255)")
+                .attr("stroke", "rgb(0, 0, 255)")
                 .attr("stroke-width", 1)
                 .attr("fill-opacity", .4)
 
