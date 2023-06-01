@@ -43,6 +43,8 @@ div#chart-3 {
   min-height: 50px;
 }
 
-h2.tm-block-title.chart-text {
-  height: 15px;
+p.tm-block-title.chart-text {
+  background-origin: padding-box;
+  color: rgb(11, 125, 121);
+  font-size:medium;
 }

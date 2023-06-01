@@ -8,15 +8,15 @@
             text-align: center;
             font-size: 1em;
         }
-        
+
         .container {
             float: left;
         }
-        
+
         .menucontainer {
             font-size: 1em;
         }
-        
+
         div.tooltip {
             position: absolute;
             text-align: center;
@@ -29,11 +29,13 @@
             border-radius: 8px;
             pointer-events: none;
         }
-        .block{
+
+        .block {
             display: block;
             width: 100%;
         }
-        body{
+
+        body {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -41,9 +43,8 @@
     </style>
     <script src="https://unpkg.com/d3@7.0.1/dist/d3.min.js"></script>
 </head>
-<h3>New cases Covid-19 of 2020</h3>
-    <div id="WorldMap"></div>
-<div id="MapLegend"></div>
+<h3>COVID-19: MONTHLY NEW CASES IN 2020</h3>
+<div id="WorldMap"></div>
 <script>
     const {
         csv,
@@ -56,11 +57,11 @@
     } = d3;
 
     const margin = {
-            top: 50,
-            right: 30,
-            bottom: 50,
-            left: 70
-        },
+        top: 50,
+        right: 30,
+        bottom: 50,
+        left: 70
+    },
         width = 462 - margin.left - margin.right,
         height = 250 - margin.top - margin.bottom;
 
@@ -74,7 +75,7 @@
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+        .attr("transform", `translate(${800},20)`);
 
     bars.append("text")
         .attr("class", "x label")
@@ -112,14 +113,14 @@
         .attr("id", "world-map")
         .attr("width", "100%")
         .attr("height", "100%")
-        .style("min-height","600px")
-        .style("min-width","1200px")
+        .style("min-height", "480px")
+        .style("min-width", "1240px")
         .append("g")
-        .attr("transform", `scale(0.5) translate(${width / 2+ 600 } ${height / 2 + 400})`);
+        .attr("transform", `scale(0.5) translate(${width / 2 + 700} ${height / 2 + 150})`);
 
     const projection = d3.geoMercator()
-        .center([0, 0])
-        .scale(200)
+        .center([20, 40])
+        .scale(225)
         .translate([width, height]); // Update the translation to the middle of the SVG
 
     // create tooltip
@@ -129,7 +130,7 @@
         .style("opacity", 0);
 
     // Draw map
-    d3.json("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/geomap.geojson").then(function(topodata) {
+    d3.json("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/geomap.geojson").then(function (topodata) {
         const p = worldmap.selectAll("path")
             .data(topodata.features);
 
@@ -142,7 +143,7 @@
             .style("fill", "green")
             .style("stroke", "black")
             .style("opacity", .4)
-            .on("mouseover", function(event, d) {
+            .on("mouseover", function (event, d) {
                 // console.log(d.properties.name);
                 tooltip.transition()
                     .duration(200)
@@ -154,7 +155,7 @@
                     .style("stroke", "black")
                     .style("opacity", 1)
             })
-            .on("mouseout", function(d) {
+            .on("mouseout", function (d) {
                 tooltip.transition()
                     .duration(500)
                     .style("opacity", 0);
@@ -162,6 +163,14 @@
                     .style("stroke", "black")
                     .style("opacity", 0.4)
             });
+        // Add zoom functionality
+        const zoomBehavior = d3.zoom()
+            .scaleExtent([1, 8])
+            .on("zoom", (event) => {
+                worldmap.attr("transform", event.transform);
+            });
+
+        d3.select("#world-map").call(zoomBehavior);
     })
 
     // // Add legend: circles
@@ -207,7 +216,7 @@
 
     function update(selectedLower, selectedHigher) {
         // console.log(selectedLower + ", " + selectedHigher);	
-        d3.csv(csvUrl).then(function(data) {
+        d3.csv(csvUrl).then(function (data) {
             console.log("check data: ", data);
             data = d3.filter(data, d => d.year >= selectedLower & d.year <= selectedHigher);
             const nest = [];
@@ -254,8 +263,8 @@
                 .attr("cx", d => projection([d.lon, d.lat])[0])
                 .attr("cy", d => projection([d.lon, d.lat])[1])
                 .attr("r", d => d.richter * 1.5 - 5)
-                .style("fill", "rgb(0, 0, 255)")
-                .attr("stroke", "rgb(0, 0, 255)")
+                .style("fill", "rgb(86, 7, 23)")
+                .attr("stroke", "rgb(255, 0, 0)")
                 .attr("stroke-width", 1)
                 .attr("fill-opacity", .4)
 
@@ -284,10 +293,10 @@
 
     const svg = select('body')
         .append('svg')
-        .attr('width', width * 2.5)
+        .attr('width', width * 3.5)
         .attr('height', height);
 
-    d3.csv(csvUrl, parseRow).then(function(data) {
+    d3.csv(csvUrl, parseRow).then(function (data) {
         console.log("check data: ", data);
         const marks = data.map((d) => ({
             x: xValue(d),
@@ -364,7 +373,7 @@
         svg.append("text")
             .attr("class", "x label")
             .attr("text-anchor", "end")
-            .attr("x", width * 2.5 - 50)
+            .attr("x", width * 2.5 - 30)
             .attr("y", height * 1.2 - 30)
             .style("font-size", "15px")
             .text("Month");
@@ -380,6 +389,46 @@
             .text("level");
 
     })
+    const legendSvg = svg.append("svg")
+        .attr("class", "legend")
+        .attr("width", 500)
+        .attr("height", 520)
+        .attr("x", width + margin.left + 520)
+        .attr("y", margin.top -29);
+
+    const legendData = [
+        { level: 1, range: "1-9 cases" },
+        { level: 2, range: "10-99 cases" },
+        { level: 3, range: "100-999 cases" },
+        { level: 4, range: "1000-9999 cases" },
+        { level: 5, range: "< 10,000 cases" },
+        { level: 6, range: "< 100,000 cases" },
+        { level: 7, range: "< 1,000,000 cases" },
+        { level: 8, range: "< 10,000,000 cases" }
+    ];
+
+    const legendRectSize = 12;
+    const legendSpacing = 5;
+
+    const legendRects = legendSvg.selectAll("rect")
+        .data(legendData)
+        .enter()
+        .append("rect")
+        .attr("x", 10)
+        .attr("y", (d, i) => i * (legendRectSize + legendSpacing))
+        .attr("width", legendRectSize)
+        .attr("height", legendRectSize)
+        .style("fill", "gray");
+
+    const legendTexts = legendSvg.selectAll("text")
+        .data(legendData)
+        .enter()
+        .append("text")
+        .attr("x", 30)
+        .attr("y", (d, i) => i * (legendRectSize + legendSpacing) + (legendRectSize / 2))
+        .attr("dy", "0.35em")
+        .style("font-size", "12px")
+        .text((d) => "Level " + d.level + ": " + d.range);
 </script>
 
 </html>

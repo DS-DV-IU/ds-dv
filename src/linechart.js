@@ -52,7 +52,7 @@ d3.csv("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/linechart.csv
             console.log(nest)
             var color = d3.scaleOrdinal()
                 .domain(res)
-                .range(['red', 'green', 'blue', 'navy', 'brown', 'purple '])
+                .range(['#DD2E38', '#5C85C4', '#3EBD71', '#975EAC', '#E1B020', '#725100']);
 
             //  Add the X Axis
             var xaxis = svg.append("g")
