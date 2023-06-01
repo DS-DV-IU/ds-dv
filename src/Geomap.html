@@ -32,7 +32,7 @@
     </style>
     <script src="https://unpkg.com/d3@7.0.1/dist/d3.min.js"></script>
 </head>
-<h3>new_cases Data Visualization</h3>
+<h3>New cases Covid-19 of 2020</h3>
 
 <div id="WorldMap"></div>
 <div id="MapLegend"></div>
@@ -85,31 +85,31 @@
         .range([10, width - 10])
         .padding(0.2);
     const xAxis = bars.append("g")
-        .attr("transform", `translate(0,${height})`)
+        .attr("transform", `translate(0,${height})`);
 
     // Initialize the Y axis
     const y = d3.scaleLinear()
         .range([height, 0]);
     const yAxis = bars.append("g")
-        .attr("transform", "translate(10,0)")
-
+        .attr("transform", "translate(10,0)");
 
     const worldmap = d3.select("#WorldMap")
         .append("svg")
         .attr("class", "container")
         .attr("id", "world-map")
-        .attr("width", width + margin.left + margin.right) 
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("width", "100%")
+        .attr("height", "100%")
         .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+        .attr("transform", `translate(${width / 2},${height / 2})`);
 
     const projection = d3.geoMercator()
-        .center([5, 40])                // GPS of location to zoom on
-        .scale(50)                       // This is like the zoom
-        .translate([width / 2, height / 2])
+        .center([0, 0])
+        .scale(200)
+        .translate([width, height]); // Update the translation to the middle of the SVG
 
     // create tooltip
-    const tooltip = d3.select("body").append("div")
+    const tooltip = d3.select("#WorldMap")
+        .append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
 
@@ -124,7 +124,7 @@
             .attr("d", d3.geoPath()
                 .projection(projection)
             )
-            .style("fill", "teal")
+            .style("fill", "green")
             .style("stroke", "black")
             .style("opacity", .4)
             .on("mouseover", function (event, d) {
@@ -149,43 +149,43 @@
             });
     })
 
-    // Add legend: circles
-    const valuesToShow = [1,2,3,4,5,6,7,8]
-    const xCircle = 0
-    const xLabel = 20
-    const yCircle = 180
+    // // Add legend: circles
+    // const valuesToShow = [1,2,3,4,5,6,7,8]
+    // const xCircle = 0
+    // const xLabel = 20
+    // const yCircle = 180
 
-    // Add legend: segments
-    worldmap
-        .selectAll("legend")
-        .data(valuesToShow)
-        .join("line")
-        .attr('x1', d => xCircle + d * 1.5 - 5)
-        .attr('x2', d => xLabel + d * 4 - 15)
-        .attr('y1', d => yCircle - d * 1.5 + 5)
-        .attr('y2', d => yCircle - d * 1.5 + 5)
-        .attr('stroke', 'black')
-        .style('stroke-dasharray', ('2,2'))
+    // // Add legend: segments
+    // worldmap
+    //     .selectAll("legend")
+    //     .data(valuesToShow)
+    //     .join("line")
+    //     .attr('x1', d => xCircle + d * 1.5 - 5)
+    //     .attr('x2', d => xLabel + d * 4 - 15)
+    //     .attr('y1', d => yCircle - d * 1.5 + 5)
+    //     .attr('y2', d => yCircle - d * 1.5 + 5)
+    //     .attr('stroke', 'black')
+    //     .style('stroke-dasharray', ('2,2'))
 
-    // Add legend: labels
-    worldmap
-        .selectAll("legend")
-        .data(valuesToShow)
-        .join("text")
-        .attr('x', d => xLabel + d * 4 - 14)
-        .attr('y', d => yCircle - d * 1.5 + 5 + 1)
-        .text(d => d)
-        .style("font-size", 6)
-        .attr('alignment-baseline', 'middle')
+    // // Add legend: labels
+    // worldmap
+    //     .selectAll("legend")
+    //     .data(valuesToShow)
+    //     .join("text")
+    //     .attr('x', d => xLabel + d * 4 - 14)
+    //     .attr('y', d => yCircle - d * 1.5 + 5 + 1)
+    //     .text(d => d)
+    //     .style("font-size", 6)
+    //     .attr('alignment-baseline', 'middle')
 
-    worldmap
-        .append("text")
-        .data(valuesToShow)
-        .attr("x", xCircle - 15)
-        .attr("y", yCircle - 30)
-        .attr("dy", ".35em")
-        .text("level")
-        .style("font-size", 10)
+    // worldmap
+    //     .append("text")
+    //     .data(valuesToShow)
+    //     .attr("x", xCircle - 15)
+    //     .attr("y", yCircle - 30)
+    //     .attr("dy", ".35em")
+    //     .text("level")
+    //     .style("font-size", 10)
 
     // data url
     const csvUrl = "https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/data_newcases.csv";
@@ -343,7 +343,7 @@
         svg.append("text")
             .attr("class", "x label")
             .attr("text-anchor", "end")
-            .attr("x", width * 2.5 - 50)
+            .attr("x", width * 2.5 - 20)
             .attr("y", height * 1.2 - 30)
             .style("font-size", "15px")
             .text("Month");
