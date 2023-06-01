@@ -8,15 +8,15 @@
             text-align: center;
             font-size: 1em;
         }
-
+        
         .container {
             float: left;
         }
-
+        
         .menucontainer {
             font-size: 1em;
         }
-
+        
         div.tooltip {
             position: absolute;
             text-align: center;
@@ -47,7 +47,12 @@
         scaleSequential
     } = d3;
 
-    const margin = { top: 50, right: 30, bottom: 50, left: 70 },
+    const margin = {
+            top: 50,
+            right: 30,
+            bottom: 50,
+            left: 70
+        },
         width = 462 - margin.left - margin.right,
         height = 250 - margin.top - margin.bottom;
 
@@ -114,7 +119,7 @@
         .style("opacity", 0);
 
     // Draw map
-    d3.json("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/geomap.geojson").then(function (topodata) {
+    d3.json("https://raw.githubusercontent.com/DS-DV-IU/ds-dv/main/data/geomap.geojson").then(function(topodata) {
         const p = worldmap.selectAll("path")
             .data(topodata.features);
 
@@ -127,7 +132,7 @@
             .style("fill", "green")
             .style("stroke", "black")
             .style("opacity", .4)
-            .on("mouseover", function (event, d) {
+            .on("mouseover", function(event, d) {
                 // console.log(d.properties.name);
                 tooltip.transition()
                     .duration(200)
@@ -139,7 +144,7 @@
                     .style("stroke", "black")
                     .style("opacity", 1)
             })
-            .on("mouseout", function (d) {
+            .on("mouseout", function(d) {
                 tooltip.transition()
                     .duration(500)
                     .style("opacity", 0);
@@ -192,7 +197,7 @@
 
     function update(selectedLower, selectedHigher) {
         // console.log(selectedLower + ", " + selectedHigher);	
-        d3.csv(csvUrl).then(function (data) {
+        d3.csv(csvUrl).then(function(data) {
             console.log("check data: ", data);
             data = d3.filter(data, d => d.year >= selectedLower & d.year <= selectedHigher);
             const nest = [];
@@ -232,15 +237,15 @@
                 .attr("width", x.bandwidth())
                 .attr("height", d => height - y(d.totaldeaths))
                 .attr("fill", "steelblue")
-                .attr("opacity", 0.8)
+                .attr("opacity", 0.6)
 
             // update circles in map
             c.join("circle")
                 .attr("cx", d => projection([d.lon, d.lat])[0])
                 .attr("cy", d => projection([d.lon, d.lat])[1])
                 .attr("r", d => d.richter * 1.5 - 5)
-                .style("fill", "rgb(104 4 11)")
-                .attr("stroke", "rgb(104 4 11)")
+                .style("fill", "rgb(0, 0, 255)")
+                .attr("stroke", "rgb(0, 0, 255)")
                 .attr("stroke-width", 1)
                 .attr("fill-opacity", .4)
 
@@ -272,7 +277,7 @@
         .attr('width', width * 2.5)
         .attr('height', height);
 
-    d3.csv(csvUrl, parseRow).then(function (data) {
+    d3.csv(csvUrl, parseRow).then(function(data) {
         console.log("check data: ", data);
         const marks = data.map((d) => ({
             x: xValue(d),
@@ -289,6 +294,7 @@
         const scatterR = scaleLinear()
             .domain(extent(data, rValue))
             .range([5, 20]);
+
         function dblclicked() {
             const selection = d3.brushSelection(this) ? null : scatterX.range();
             d3.select(this).call(brush.move, selection);
@@ -304,10 +310,15 @@
             .attr('opacity', 0.5);
 
         const brush = d3.brushX()
-            .extent([[margin.left + 50, margin.top], [width * 2.5 - margin.right - 50, height * 1.2 - margin.bottom]])
+            .extent([
+                [margin.left + 50, margin.top],
+                [width * 2.5 - margin.right - 50, height * 1.2 - margin.bottom]
+            ])
             .on("start brush end", brushed);
 
-        function brushed({ selection }) {
+        function brushed({
+            selection
+        }) {
             if (selection === null) {
                 circle.attr("fill", null);
             } else {
@@ -343,7 +354,7 @@
         svg.append("text")
             .attr("class", "x label")
             .attr("text-anchor", "end")
-            .attr("x", width * 2.5 - 20)
+            .attr("x", width * 2.5 - 50)
             .attr("y", height * 1.2 - 30)
             .style("font-size", "15px")
             .text("Month");
@@ -359,8 +370,6 @@
             .text("level");
 
     })
-
-
 </script>
 
 </html>
