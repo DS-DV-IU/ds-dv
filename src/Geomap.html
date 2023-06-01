@@ -29,12 +29,20 @@
             border-radius: 8px;
             pointer-events: none;
         }
+        .block{
+            display: block;
+            width: 100%;
+        }
+        body{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
     </style>
     <script src="https://unpkg.com/d3@7.0.1/dist/d3.min.js"></script>
 </head>
 <h3>New cases Covid-19 of 2020</h3>
-
-<div id="WorldMap"></div>
+    <div id="WorldMap"></div>
 <div id="MapLegend"></div>
 <script>
     const {
@@ -104,8 +112,10 @@
         .attr("id", "world-map")
         .attr("width", "100%")
         .attr("height", "100%")
+        .style("min-height","600px")
+        .style("min-width","1200px")
         .append("g")
-        .attr("transform", `translate(${width / 2},${height / 2})`);
+        .attr("transform", `scale(0.5) translate(${width / 2+ 600 } ${height / 2 + 400})`);
 
     const projection = d3.geoMercator()
         .center([0, 0])
