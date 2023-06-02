@@ -177,6 +177,7 @@ function drawChart(data) {
                 return;
             }
             update(dataset[currentDateIndex].date);
+            // console.log(dataset[currentDateIndex]);
 
             if (playRace === true) {
                 currentDateIndex++;
