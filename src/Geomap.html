@@ -66,7 +66,7 @@
         height = 250 - margin.top - margin.bottom;
 
     const xAxisLabel = 'Region';
-    const yAxisLable = 'Total Deaths';
+    const yAxisLable = 'Total new_case';
 
     const bars = d3.select("#BarPlot")
         .append("svg")
@@ -222,17 +222,17 @@
             const nest = [];
             const keys = ["Guatemala", "Russia", "Turkey", "India", "Ecuador", "Taiwan", "United States", "Chile", "Asia", "Italy", "Iran", "China", "Japan", "Nicaragua", "Armenia-Azerbaijan", "India-Nepal", "Pakistan", "Romania", "Argentina", "Peru", "Turkmenistan", "Tajikistan", "Algeria", "Afghanistan", "Morocco", "Yugoslavia", "New Guinea", "Philippines", "Iran-Turkey", "Mexico", "El Salvador", "Colombia-Ecuador", "Armenia", "Pakistan-Afghanistan", "Indonesia", "Colombia", "Afghanistan-Tajikistan"];
             keys.forEach((d) => {
-                const s = d3.sum(data.filter(data => data.region === d), (e) => e.deaths);
+                const s = d3.sum(data.filter(data => data.region === d), (e) => e.new_case);
                 //create an object with this key value pair
                 const obj = {
                     region: d, //region
-                    totaldeaths: s //sum for deaths
+                    totalnew_case: s //sum for new_case
                 }
-                if (obj.totaldeaths > 0) {
+                if (obj.totalnew_case > 0) {
                     nest.push(obj); //push this as an object in the nest array
                 }
             })
-            nest.sort((a, b) => (b.totaldeaths - a.totaldeaths));
+            nest.sort((a, b) => (b.totalnew_case - a.totalnew_case));
 
             x.domain(nest.map(d => d.region))
             xAxis.call(d3.axisBottom(x))
@@ -241,7 +241,7 @@
                 .style("text-anchor", "end")
                 .style("font-size", "9px");
 
-            y.domain([0, d3.max(nest, d => d.totaldeaths) * 1.1]);
+            y.domain([0, d3.max(nest, d => d.totalnew_case) * 1.1]);
             yAxis.call(d3.axisLeft(y));
 
             const u = bars.selectAll("rect")
@@ -252,9 +252,9 @@
             // update bar plot
             u.join("rect")
                 .attr("x", d => x(d.region))
-                .attr("y", d => y(d.totaldeaths))
+                .attr("y", d => y(d.totalnew_case))
                 .attr("width", x.bandwidth())
-                .attr("height", d => height - y(d.totaldeaths))
+                .attr("height", d => height - y(d.totalnew_case))
                 .attr("fill", "steelblue")
                 .attr("opacity", 0.6)
 
@@ -283,13 +283,13 @@
 
     const parseRow = (d) => {
         d.richter = +d.richter;
-        d.deaths = +d.deaths;
+        d.new_case = +d.new_case;
         d.year = +d.year;
         return d;
     };
     const xValue = (d) => d.year;
     const yValue = (d) => d.richter;
-    const rValue = (d) => d.deaths;
+    const rValue = (d) => d.new_case;
 
     const svg = select('body')
         .append('svg')
